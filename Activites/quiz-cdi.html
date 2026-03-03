@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDI — Quiz JPO</title>
+<link rel="stylesheet" href="style-global.css">
+<style>
+.hero-banner { background: linear-gradient(135deg, var(--cdi), var(--cdi-dark)); }
+.btn-valider { background: var(--cdi) !important; }
+.qp-dot.active { background: var(--cdi) !important; }
+.score-badge { background: var(--cdi-light); color: var(--cdi-dark); border: 2px solid var(--cdi); }
+.btn-next { background: linear-gradient(135deg, var(--cdi), var(--cdi-dark)); color: white; box-shadow: 0 4px 20px rgba(59,130,246,.4); }
+.result-card { background: white; border-radius: 24px; padding: 32px 24px; text-align: center; width: 100%; max-width: 640px; box-shadow: 0 8px 32px var(--shadow); }
+.result-icon { font-size: 4rem; display: block; margin-bottom: 12px; animation: popIn .5s .2s ease both; }
+.result-title { font-family:'Baloo 2',cursive; font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+.result-pts { font-family:'Baloo 2',cursive; font-size: 2.5rem; font-weight: 800; color: var(--cdi); margin-bottom: 16px; }
+.result-msg { font-size: .9rem; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+<div style="width:100%;max-width:640px">
+
+  <div class="hero-banner fade-up">
+    <span class="hero-tag">📍 Arrêt 1 · CDI</span>
+    <span class="hero-icon">📚</span>
+    <h1 class="hero-title">Langues & Culture</h1>
+    <p class="hero-sub">Découvre les langues vivantes, le latin, le théâtre et la section européenne du lycée !</p>
+  </div>
+
+  <!-- Présentation filières -->
+  <div class="card fade-up d1">
+    <div class="card-title" style="color:var(--cdi)">📖 Les formations au CDI</div>
+    <div class="filiere-grid">
+      <div class="filiere-item">
+        <span class="filiere-emoji">🌍</span>
+        <div>
+          <div class="filiere-name">Langues Vivantes — LV2</div>
+          <div class="filiere-desc">Espagnol, Allemand, Italien disponibles dès la 2nde comme 2ème langue.</div>
+        </div>
+      </div>
+      <div class="filiere-item">
+        <span class="filiere-emoji">🇬🇧</span>
+        <div>
+          <div class="filiere-name">Section Européenne Anglais</div>
+          <div class="filiere-desc">Des cours de DNL (Discipline Non Linguistique) en anglais. Un atout sur le CV !</div>
+        </div>
+      </div>
+      <div class="filiere-item">
+        <span class="filiere-emoji">🏛️</span>
+        <div>
+          <div class="filiere-name">Option Latin</div>
+          <div class="filiere-desc">Découverte de la langue et de la civilisation romaine. Très utile pour la culture générale !</div>
+        </div>
+      </div>
+      <div class="filiere-item">
+        <span class="filiere-emoji">🎭</span>
+        <div>
+          <div class="filiere-name">Enseignement Théâtre</div>
+          <div class="filiere-desc">Option et spécialité théâtre. Travail avec un intervenant professionnel tout au long de l'année.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card fade-up d2" id="quiz-card">
+    <div class="card-title" style="color:var(--cdi)">🎯 Quiz — Teste tes connaissances !</div>
+    <div id="quiz-container"></div>
+  </div>
+
+  <!-- Résultat (caché au départ) -->
+  <div class="result-card fade-up" id="result-card" style="display:none">
+    <span class="result-icon" id="res-icon">🎉</span>
+    <div class="result-title" id="res-title">Bravo !</div>
+    <div class="result-pts" id="res-pts">0 pts</div>
+    <div class="result-msg" id="res-msg"></div>
+    <a href="plan.html" class="btn-next">➡️ Retour au parcours</a>
+  </div>
+
+  <div class="already-done" id="already">
+    ✅ Tu as déjà visité cette salle ! Rendez-vous à la prochaine étape.
+  </div>
+
+  <a href="plan.html" class="btn-back fade-up d3">← Retour au plan</a>
+</div>
+</div>
+
+<script src="script.js"></script>
+<script>
+buildNav('cdi');
+
+if (isDone('cdi')) {
+  document.getElementById('already').style.display = 'block';
+  document.getElementById('quiz-card').style.display = 'none';
+}
+
+const QUESTIONS = [
+  {
+    question: "Quelle langue n'est PAS proposée en LV2 au lycée Albert Camus ?",
+    choices: ["Espagnol", "Chinois", "Allemand", "Italien"],
+    correct: 1,
+    points: 10,
+    bravo: "Exact ! Le chinois n'est pas proposé ici.",
+    explication: "Le lycée propose Espagnol, Allemand et Italien en LV2. Le chinois n'est pas au programme !"
+  },
+  {
+    question: "Qu'est-ce que la Section Européenne propose en plus des cours normaux ?",
+    choices: ["Des voyages scolaires obligatoires", "Des cours dans une discipline en anglais (DNL)", "Un examen supplémentaire au bac", "Des cours le samedi matin"],
+    correct: 1,
+    points: 10,
+    bravo: "Très bien ! La DNL c'est apprendre une matière en anglais.",
+    explication: "La Section Européenne propose des cours de DNL : une matière comme l'Histoire est enseignée en anglais !"
+  },
+  {
+    question: "L'option Théâtre au lycée Albert Camus se fait avec...",
+    choices: ["Uniquement des élèves de terminale", "Un intervenant professionnel du spectacle", "Des cours uniquement en dehors du lycée", "Pas de représentation publique"],
+    correct: 1,
+    points: 10,
+    bravo: "Parfait ! Un vrai professionnel intervient toute l'année.",
+    explication: "Le théâtre au lycée bénéficie de l'intervention d'un professionnel du spectacle tout au long de l'année !"
+  }
+];
+
+runQuiz({
+  questions: QUESTIONS,
+  salleId: 'cdi',
+  color: 'var(--cdi)',
+  lightColor: 'var(--cdi-light)',
+  onComplete: (score) => {
+    document.getElementById('quiz-card').style.display = 'none';
+    const res = document.getElementById('result-card');
+    res.style.display = 'block';
+    document.getElementById('res-pts').textContent = score + ' pts';
+    if (score === 30) {
+      document.getElementById('res-icon').textContent = '🏆';
+      document.getElementById('res-title').textContent = 'Score parfait !';
+      document.getElementById('res-msg').textContent = 'Incroyable, tu as tout bon ! Tu es maintenant un expert des langues et de la culture au lycée Albert Camus. Continue comme ça !';
+    } else if (score >= 20) {
+      document.getElementById('res-icon').textContent = '🌟';
+      document.getElementById('res-title').textContent = 'Très bien !';
+      document.getElementById('res-msg').textContent = 'Belle performance ! Tu connais bien les options culturelles du lycée. Direction la prochaine salle !';
+    } else {
+      document.getElementById('res-icon').textContent = '💪';
+      document.getElementById('res-title').textContent = 'Bien joué !';
+      document.getElementById('res-msg').textContent = 'Tu as découvert les formations du CDI ! Les bonnes réponses t\'ont appris de nouvelles choses. Continue la visite !';
+    }
+  }
+});
+</script>
+</body>
+</html>
